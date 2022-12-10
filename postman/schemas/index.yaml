@@ -1,0 +1,77 @@
+openapi: '3.0.0'
+info:
+  version: '1.0.0'
+  title: 'Products API'
+  description: Buy or rent products
+
+paths:
+  /products/{id}:
+    parameters:
+      - name: id
+        description: The unique identifier of the product
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+    get:
+      summary: Read a spacecraft
+      responses:
+        '200':
+          description: The product corresponding to the provided `id`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        404:
+          description: No product found for the provided `id`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Id:
+      description: The unique identifier of a product
+      type: string
+    Product:
+      type: object
+      required:
+        - id
+        - name
+        - type
+      properties:
+        id:
+          $ref: '#/components/schemas/SpacecraftId'
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - capsule
+            - probe
+            - satellite
+            - spaceplane
+            - station
+        description:
+          type: string
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          description: A human readable error message
+          type: string
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+security:
+  - ApiKey: []
